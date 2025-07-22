@@ -1,5 +1,6 @@
 const User = require('../models/users.js')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 
 
@@ -56,6 +57,37 @@ const registerUser = async(req,res) => {
 //login controller
 const loginUser = async(req,res) => {
     try {
+        const {username, password} = req.body;
+        //find if current user exists in db
+        const user = await User.findOne({username})
+        if(!user) {
+            res.status(400).json({
+                success : false,
+                message : "Invalid Username or password"
+            })
+        }
+
+        //if the password is correct
+        const isPasswordMatch = await bcrypt.compare(password, user.password)
+        if(!isPasswordMatch){
+            res.status(400).json({
+                success : false,
+                message : "Invalid Credentials"
+            })
+        }
+
+        const accessToken = jwt.sign({
+            userId : user._id,
+            username : user.username
+        }, process.env.JWT_SECRET_KEY,{
+            expiresIn : '30m'
+        })
+
+        res.status(200).json({
+            success : true,
+            message : "logged in successfully",
+            accessToken
+        })
 
     } catch (e){
         console.log(e);
