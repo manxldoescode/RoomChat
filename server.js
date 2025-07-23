@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+// const socketIo = require('socket.io');
 const authRoutes = require('./routes/auth-routes')
 const connectToDb = require('./database/db')
 
@@ -20,9 +20,8 @@ const PORT = 3000;
 
 
 app.use(express.json())
-
+app.use('/auth', authRoutes)
 
 app.listen(PORT, ()=> {
     console.log(`server is running on ${PORT}`) 
 })
-app.use('/auth', authRoutes)
