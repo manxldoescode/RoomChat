@@ -61,7 +61,7 @@ const loginUser = async(req,res) => {
         //find if current user exists in db
         const user = await User.findOne({username})
         if(!user) {
-            res.status(400).json({
+            return res.status(400).json({
                 success : false,
                 message : "Invalid Username or password"
             })
@@ -70,7 +70,7 @@ const loginUser = async(req,res) => {
         //if the password is correct
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if(!isPasswordMatch){
-            res.status(400).json({
+            return res.status(400).json({
                 success : false,
                 message : "Invalid Credentials"
             })
