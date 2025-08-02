@@ -1,7 +1,54 @@
 const loginForm = document.querySelector('.login_form');
-const usernameInput = document.querySelector('input[type="text"]');
-const passwordInput = document.querySelector('input[type="password"]')
-const submitButton = document.querySelector('button[type="submit"]')
+const usernameInput = document.querySelector('#username');
+const passwordInput = document.querySelector('#password')
+const submitButton = document.querySelector('#submitBtn')
+const loginToggle = document.querySelector('#loginToggle');
+const registerToggle = document.querySelector('#registerToggle')
+const usernameLabel = document.querySelector('#usernameLabel');
+
+
+let currentMode = 'login';
+
+//Toggle button event listeners
+loginToggle.addEventListener('click', ()=> {
+    switchMode('login')
+})
+
+registerToggle.addEventListener('click', () => {
+    switchMode('register')
+})
+
+function switchMode(mode) {
+    currentMode = mode;
+
+    if(mode === 'login'){
+        loginToggle.classList.add('active');
+        registerToggle.classList.remove('active');
+
+        //Update form for login
+
+        usernameLabel.textContent = 'enter your alias';
+        submitButton.textContent = 'GETIN';
+    } else {
+        registerToggle.classList.add('active');
+        loginToggle.classList.remove('active');
+
+        //update form for registratoin 
+        usernameLabel.textContent = 'Choose your alias'
+        submitButton.textContent = 'JOIN THE CULT'
+    }
+
+    //clear form and messages when switching
+    usernameInput.value = '';
+    passwordInput.value = '';
+    removeMessages();
+}
+
+
+
+
+
+
 
 loginForm.addEventListener('submit', async(e)=>{
     e.preventDefault()
@@ -14,7 +61,21 @@ loginForm.addEventListener('submit', async(e)=>{
             return;
         }
 
-        const response = await fetch('http://localhost:3000/auth/login', {
+        if (currentMode === 'register') {
+            if (username.length < 4) {
+                showError('ADD THEM ALPHABETS IN YO ALIAS')
+                return
+            }
+
+            if (password.length < 6){
+                showError('I AINT SAVING YO ASS IF THIS SHIT IS LESS THAN 6')
+                return
+            }
+        }
+
+        const endpoint = currentMode === 'login' ? '/auth/login' : '/auth/register';
+
+        const response = await fetch(`http://localhost:3000${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
@@ -28,24 +89,42 @@ loginForm.addEventListener('submit', async(e)=>{
         const data = await response.json();
 
         if(data.success){
-            //login successfull
-            if (data.accessToken){
-                sessionStorage.setItem('authToken', data.accessToken);
-            }
 
-            //show success
-            showSuccess('Login successful!!');
+            //success handling
+            console.log(`${currentMode} successful:`, data);
+
+            if (currentMode === 'login'){
+                //login successful
+                if(data.accessToken){
+                    sessionStorage.setItem('authToken', data.accessToken)
+                    sessionStorage.setItem('username', username);
+                }
+
+                showSuccess(`welcome back, ${username}! login succesful`)
+            } else {
+                showSuccess(`Account created successfully! You can sign in.`);
+
+                //auto-switch after regisration 
+                setTimeout(() => {
+                    switchMode('login');
+                    usernameInput.value = username;
+                }, 2000);
+            }
+            
             
             //clear the form
             usernameInput.value = '';
             passwordInput.value = '';
 
+
+
         } else {
-            showError (data.message);
+            showError (data.message || `${currentMode} failed. Please try again!`);
+            
         }
     }
     catch(error) {
-        console.error('Login error:', error);
+        console.error(`${currentMode}`, error);
         showError('Connection error, Please try again');
     } finally {
         submitButton.disabled = false;

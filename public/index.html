@@ -10,16 +10,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+
     <div class="container">
         <h1 class="label">ANONIMITY</h1>
         <form class="login_form">
-            <div class="font">enter your alias</div>
-            <input type="text" name="" id="">
+            <div class="font", id="usernameLabel">enter your alias</div>
+            <input type="text" name="username" id="username",>
             <div class="font font2">Password</div>
-            <input type="password">
-            <button type="submit">GETIN</button>
+            <input type="password" id="password" name="password" >
+            <button type="submit" id="submitBtn">GETIN</button>
         </form>
+
+        <div class="toggle-container">
+            <button type="button" class="toggle-btn active" id="loginToggle">Sign In</button>
+            <button type="button" class="toggle-btn" id="registerToggle">Sign Up</button>
+        </div>
+
     </div>
+
 
 
 

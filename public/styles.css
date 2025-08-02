@@ -13,6 +13,8 @@ body{
 
 .container{
     position: relative;
+    padding-left: 50px;
+    padding-right: 50px;
     margin-top: 100px;
     width: 450px;
     height: auto;
@@ -21,10 +23,19 @@ body{
 }
 
 .label {
+    display: flex;
+    justify-content: center;
     padding: 20px 130px;
     font-size: 20px;
     font-weight: 600;
     color:rgb(255, 255, 255)
+}
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .login_form .font{
@@ -55,3 +66,41 @@ body{
     font-family: 'Bitcount Single', sans-serif;
     font-weight: bold;
 }
+
+.toggle-container {
+    display: flex;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px silver;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 9px 15px;
+    background: #1a1a1a;
+    color: #888;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.3s ease;
+ }
+
+.toggle-btn.active{
+    background-color: #333;
+    color: #fff;
+}
+
+
+.toggle-btn:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+
+/* .font{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */
