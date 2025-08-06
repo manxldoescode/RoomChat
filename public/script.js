@@ -116,6 +116,9 @@ loginForm.addEventListener('submit', async(e)=>{
             usernameInput.value = '';
             passwordInput.value = '';
 
+            setTimeout(() => {
+                window.location.href = 'chat.html'
+            }, 2000)
 
 
         } else {
