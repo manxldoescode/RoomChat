@@ -18,6 +18,12 @@ const PORT = 3000;
 
 //HTTP Server and Socket.io instance
 const server = http.createServer(app);
+app.use(cors({
+    origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000'],
+    credentials: true
+}));
+
+
 const io = socketIo(server, {
     cors: {
         origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000'],
@@ -28,10 +34,6 @@ const io = socketIo(server, {
 
 
 // const io = socketIo(server);
-app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000'],
-    credentials: true
-}));
 
 
 app.use(express.json())
@@ -65,7 +67,7 @@ io.on('connection', (socket)=> {
         const userList = Array.from(connectedUSers.values()).map ( user => user.username);
         socket.emit('users_list', userList);
 
-        io.emit('update_users_list', usersList);
+        io.emit('update_users_list', userList);
         
     });
 
@@ -82,7 +84,7 @@ io.on('connection', (socket)=> {
             console.log('Message from', user.username + ':', messageData.message);
 
             //sending the message to everyone including the sender
-            io.emit('recieve_message', message)
+            io.emit('receive_message', message)
             
         }
     });
@@ -110,6 +112,6 @@ io.on('connection', (socket)=> {
     
 })
 
-app.listen(PORT, ()=> {
+server.listen(PORT, ()=> {
     console.log(`server is running on ${PORT}`) 
 })
