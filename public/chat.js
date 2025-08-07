@@ -37,6 +37,12 @@ socket.on('connect', ()=> {
     })
 });
 
+//error handling
+socket.on('connect_error', (error) => {
+    console.log('Connection error:', error);
+});
+
+
 //disconnect event
 socket.on('disconnect', ()=> {
     console.log('disconnected from server');
@@ -75,6 +81,7 @@ messageForm.addEventListener('submit', (e) => {
     if(message){
         //send message to server
         socket.emit('send_message', {
+            username: username,
             message: message
         });
 
@@ -99,3 +106,78 @@ logoutBtn.addEventListener('click', ()=> {
         window.location.href = 'index.html'
     }
 })
+
+//tracking the last user
+let lastUser = null;
+
+
+//function to display a message
+function displayMessage(messageData) {
+    const messageElement = document.createElement('div')
+    messageElement.className = 'message';
+
+    const isOwnMessage = messageData.username === username;
+
+    const showUsername = messageData.username !== lastUser;
+    lastUser = messageData.username;
+
+    messageElement.innerHTML = `
+        ${showUsername ? `
+            <div class="message-header">
+                <span class="message-username" style="color: ${isOwnMessage ? '#4CAF50' : '#aa494fff'}">
+                    ${messageData.username}${isOwnMessage ? ' (You)' : ''}
+                </span>
+            </div>
+        ` : ''}
+        <div class="message-text">${escapeHtml(messageData.message)}</div>
+    `;
+
+
+    messagesContainer.appendChild(messageElement);
+    scrolltoBottom();
+}
+
+function showSystemMessage(message){
+    const messageElement = document.createElement('div');
+    messageElement.className = 'system-message';
+    messageElement.textContent = message;
+
+    messagesContainer.appendChild(messageElement);
+    scrolltoBottom();
+}
+
+
+//function to update users list
+function updateUsersList(users){
+    usersList.innerHTML= '';
+    
+    users.forEach(user => {
+        const userElement = document.createElement('div');
+        userElement.className = 'user-time';
+        userElement.textContent = user === user ? `${user} (You)` : user;
+        usersList.appendChild(userElement);
+    })
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML
+}
+
+//function to scroll to bottom of messages
+function scrolltoBottom(){
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+messageInput.focus();
+
+//handle enter key for sending messages
+messageInput.addEventListener('keypress', (e)=> {
+    if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        messageForm.dispatchEvent(new Event('submit'));
+    }
+});
+
+console.log('Chat intialized for user:', username);
