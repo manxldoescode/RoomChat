@@ -1,9 +1,22 @@
+import passport from 'passport';
+
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/auth-controllers');
+const { registerUser, loginUser, googleAuthSuccess, googleAuthFailure } = require('../controllers/auth-controllers');
 const router = express.Router();
 console.log(typeof registerUser, typeof loginUser); // <-- Debug line
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+
+
+router.get('/google/callback', 
+    passport.authenticate('google', {
+        failureRedirect: '/auth/google/failure',
+        session: false
+    }),
+    googleAuthSuccess
+)
+
+router.get('/google/failer', googleAuthFailure)
 
 module.exports = router;

@@ -6,6 +6,8 @@ const authRoutes = require('./routes/auth-routes')
 const connectToDb = require('./database/db')
 const cors = require('cors');
 const { log, timeStamp } = require('console');
+const session = require('express-session');
+const passport = require('passport');
 
 
 connectToDb();
@@ -14,6 +16,8 @@ connectToDb();
 
 const app = express();
 const PORT = 3000;
+
+
 
 
 //HTTP Server and Socket.io instance
@@ -32,8 +36,23 @@ const io = socketIo(server, {
     }
 })
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV == 'production',
+        maxAge: 10 * 60 * 1000,
+        httpOnly: true
+    }
 
-// const io = socketIo(server);
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.use(express.json())
